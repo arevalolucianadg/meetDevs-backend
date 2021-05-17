@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import apiRoute from '../api';
+import notFound from '../middlewares/notFound';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -17,5 +18,7 @@ app.use(express.json());
 
 // routes
 app.use('/api', apiRoute);
+
+app.use(notFound);
 
 export default app;
