@@ -13,6 +13,6 @@ export const options = {
     ],
   },
   apis: [
-    './src/api/user/*.**.ts',
+    './src/api/**/*.**.ts',
   ],
 };
