@@ -6,18 +6,18 @@ import { IUser } from './user.interface';
 const UserSchema: Schema = new Schema({
   firstName: {
     type: String,
-    required: true,
-    trim: [true, 'El nombre es requerido.'],
+    required: [true, 'El nombre es requerido.'],
+    trim: true,
   },
   lastName: {
     type: String,
-    required: true,
-    trim: [true, 'El apellido es requerido.'],
+    required: [true, 'El apellido es requerido.'],
+    trim: true,
   },
   email: {
     type: String,
-    required: true,
-    trim: [true, 'El email es requerido.'],
+    required: [true, 'El email es requerido.'],
+    trim: true,
     unique: true,
   },
   password: {
