@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { createUser, getUsers, getUser, deleteUser } from './user.controller';
+import { createUser, getUsers, getUser, deleteUser, updateUser } from './user.controller';
+import { validateToken } from '../../middlewares/authToken';
+import { validateRole } from '../../middlewares/validateRole';
 
 const userRouter: Router = Router();
 
@@ -7,12 +9,12 @@ const userRouter: Router = Router();
  * @swagger
  * components:
  *  schemas:
- *    User:
+ *    NewUser:
  *      type: object
  *      properties:
  *        id:
  *          type: string
- *          description: ID autogenerado del usuario
+ *          description: ID del usuario
  *        firstName:
  *          type: string
  *          description: Nombre del usuario
@@ -41,6 +43,33 @@ const userRouter: Router = Router();
  *        lastName: Solo
  *        email: han.solo@gmail.com
  *        password: hsolo
+ *    SafeUser:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: ID del usuario
+ *        firstName:
+ *          type: string
+ *          description: Nombre del usuario
+ *        lastName:
+ *          type: string
+ *          description: Apellido del usuario
+ *        email:
+ *          type: string
+ *          description: Email del usuario
+ *        role:
+ *          type: string
+ *          description: Rol del usuario
+ *        photo:
+ *          type: string
+ *          description: Foto del usuario
+ *      example:
+ *        role: USER
+ *        firstName: Han
+ *        lastName: Solo
+ *        email: han.solo@gmail.com
+ *        id: 60a3f5e5f7ccda3664813561
  *  parameters:
  *   userId:
  *    in: path
@@ -49,6 +78,11 @@ const userRouter: Router = Router();
  *    schema:
  *     type: string
  *    description: ID del usuario
+ *  securitySchemes:
+ *   bearerAuth:
+ *    type: http
+ *    scheme: bearer
+ *    bearerFormat: JWT
  */
 
 /**
@@ -56,7 +90,7 @@ const userRouter: Router = Router();
  * /users:
  *  get:
  *    summary: Crear un nuevo usuario
- *    tags: [User]
+ *    tags: [users]
  *    responses:
  *      200:
  *          description: Obtener lista de usuarios
@@ -68,7 +102,7 @@ const userRouter: Router = Router();
  *                          data:
  *                              type: array
  *                              items: 
- *                               $ref: '#/components/schemas/User'
+ *                               $ref: '#/components/schemas/SafeUser'
  *                          message:
  *                              type: string
  *                              default: Usuario obtenido con éxito.
@@ -100,7 +134,9 @@ userRouter.get('/', getUsers);
  * /users/{id}:
  *  get:
  *    summary: Obtener usuario por ID
- *    tags: [User]
+ *    tags: [users]
+ *    security:
+ *     - bearerAuth: []
  *    parameters:
  *     - $ref: '#/components/parameters/userId'
  *    responses:
@@ -112,7 +148,7 @@ userRouter.get('/', getUsers);
  *                      type: object
  *                      properties:
  *                          data:
- *                              $ref: '#/components/schemas/User'
+ *                              $ref: '#/components/schemas/SafeUser'
  *                          message:
  *                              type: string
  *                              default: Usuario obtenido con éxito.
@@ -137,20 +173,20 @@ userRouter.get('/', getUsers);
  *                              default: false
  *      
  */
-userRouter.get('/:id', getUser);
+userRouter.get('/:id', validateToken, getUser);
 
 /**
  * @swagger
  * /users:
  *  post:
  *    summary: Crear un nuevo usuario
- *    tags: [User]
+ *    tags: [users]
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/User'
+ *            $ref: '#/components/schemas/NewUser'
  *    responses:
  *      201:
  *          description: El usuario ha sido creado con éxito.
@@ -160,7 +196,7 @@ userRouter.get('/:id', getUser);
  *                      type: object
  *                      properties:
  *                          data:
- *                              $ref: '#/components/schemas/User'
+ *                              $ref: '#/components/schemas/SafeUser'
  *                          message:
  *                              type: string
  *                              default: El usuario ha sido creado con éxito.
@@ -201,14 +237,83 @@ userRouter.get('/:id', getUser);
  *                              default: false
  *
  */
-userRouter.post('/', createUser);
+userRouter.post('/', validateRole, createUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *  put:
+ *    summary: Actualizar usuario
+ *    tags: [users]
+ *    security:
+ *     - bearerAuth: []
+ *    parameters:
+ *     - $ref: '#/components/parameters/userId'
+ *    requestBody:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/NewUser'
+ *    responses:
+ *      200:
+ *          description: Usuario actualizado con éxito
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              $ref: '#/components/schemas/SafeUser'
+ *                          message:
+ *                              type: string
+ *                              default: El usuario fue actualizado con éxito.
+ *                          success:
+ *                              type: boolean
+ *                              default: true
+ *      400:
+ *          description: El ID es requerido para actualizar un usuario
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              default: null
+ *                          message:
+ *                              type: string
+ *                              default: El ID es requerido para actualizar un usuario.
+ *                          success:
+ *                              type: boolean
+ *                              default: false
+ *      404:
+ *          description: Usuario no encontrado
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              default: null
+ *                          message:
+ *                              type: string
+ *                              default: El ID ingresado no pertenece a un usuario existente.
+ *                          success:
+ *                              type: boolean
+ *                              default: false
+ *      
+ */
+userRouter.put('/:id', validateToken, updateUser);
 
 /**
  * @swagger
  * /users/{id}:
  *  delete:
  *    summary: Eliminar usuario
- *    tags: [User]
+ *    tags: [users]
+ *    security:
+ *     - bearerAuth: []
  *    parameters:
  *     - $ref: '#/components/parameters/userId'
  *    responses:
@@ -262,6 +367,6 @@ userRouter.post('/', createUser);
  *                              default: true
  *      
  */
-userRouter.delete('/:id', deleteUser);
+userRouter.delete('/:id', validateToken, deleteUser);
 
 export default userRouter;

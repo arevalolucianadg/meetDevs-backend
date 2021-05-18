@@ -1,7 +1,11 @@
 import { IUser } from '../api/user/user.interface';
 
+interface DataResponse {
+  token?: string;
+  user?: IUser | true;
+}
 export interface HandleResponseProps {
-  data: IUser | IUser[] | null;
+  data: IUser | IUser[] | DataResponse | null | string;
   message: string;
-  success: boolean;
+  success: 'OK' | 'ERROR' | boolean;
 }

@@ -1,14 +1,16 @@
 import { Handler } from 'express';
-import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 
-import { handleResponse } from '../../utils/handleResponse';
 import userModel from './user.model';
+import { handleResponse } from '../../utils/handleResponse';
+import { passwordEncrypt } from '../../utils/passwordEncrypt';
 
 export const getUsers: Handler = async (req, res) => {
   try {
     const users = await userModel.find({});
-    const resMessage = users.length === 0 ? 'No hay usuarios.' : 'Lista de usuarios obtenida con éxito.';
+    const resMessage =
+      users.length === 0
+        ? 'No hay usuarios.'
+        : 'Lista de usuarios obtenida con éxito.';
     res.status(200).json(
       handleResponse({
         data: users,
@@ -55,7 +57,7 @@ export const getUser: Handler = async (req, res) => {
 };
 
 export const createUser: Handler = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
 
   if (!firstName && !lastName && !email && !password) {
     return res.status(400).json(
@@ -79,15 +81,14 @@ export const createUser: Handler = async (req, res) => {
     );
   }
 
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
+  const passwordHash = await passwordEncrypt(password);
 
   const newUser = new userModel({
-    userId: uuidv4(),
     firstName,
     lastName,
     email,
     password: passwordHash,
+    role,
   });
 
   const savedUser = await newUser.save();
@@ -99,6 +100,48 @@ export const createUser: Handler = async (req, res) => {
       success: true,
     })
   );
+};
+
+export const updateUser: Handler = async (req, res) => {
+  const { id } = req.params;
+  const { password, ...user } = req.body;
+
+  if (!id) {
+    return res.status(400).json(
+      handleResponse({
+        data: null,
+        message: 'El ID es requerido para actualizar un usuario.',
+        success: false,
+      })
+    );
+  }
+
+  if (password) {
+    const passwordHash = await passwordEncrypt(password);
+    user.password = passwordHash;
+  }
+
+  try {
+    const userUpdated = await userModel.findByIdAndUpdate(id, user, {
+      new: true,
+    });
+    res.status(200).json(
+      handleResponse({
+        data: userUpdated,
+        message: 'El usuario fue actualizado con éxito.',
+        success: true,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(404).json(
+      handleResponse({
+        data: null,
+        message: 'El ID ingresado no pertenece a un usuario existente.',
+        success: false,
+      })
+    );
+  }
 };
 
 export const deleteUser: Handler = async (req, res) => {
@@ -114,8 +157,17 @@ export const deleteUser: Handler = async (req, res) => {
     );
   }
 
-  const userDeleted = await userModel.findOneAndDelete({ userId: id });
-  if (!userDeleted) {
+  try {
+    await userModel.findByIdAndDelete(id);
+    return res.status(200).json(
+      handleResponse({
+        data: null,
+        message: 'El usuario ha sido eliminado con éxito.',
+        success: true,
+      })
+    );
+  } catch (error) {
+    console.log(error);
     return res.status(404).json(
       handleResponse({
         data: null,
@@ -124,12 +176,4 @@ export const deleteUser: Handler = async (req, res) => {
       })
     );
   }
-
-  return res.status(200).json(
-    handleResponse({
-      data: null,
-      message: 'El usuario ha sido eliminado con éxito.',
-      success: true,
-    })
-  );
 };

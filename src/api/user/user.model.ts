@@ -4,10 +4,6 @@ import uniqueValidator from 'mongoose-unique-validator';
 import { IUser } from './user.interface';
 
 const UserSchema: Schema = new Schema({
-  userId: {
-    type: String,
-    required: [true, 'El ID es requerido.'],
-  },
   firstName: {
     type: String,
     required: true,
