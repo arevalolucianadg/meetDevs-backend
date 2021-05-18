@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { handleResponse } from '../../utils/handleResponse';
 import userModel from './user.model';
 
+
 export const createUser: Handler = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
