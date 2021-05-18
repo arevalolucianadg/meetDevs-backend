@@ -1,11 +1,10 @@
 import { Schema, model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import bcrypt from 'bcrypt';
 
 import { IUser } from './user.interface';
 
 const UserSchema: Schema = new Schema({
-  id: {
+  userId: {
     type: String,
     required: [true, 'El ID es requerido.'],
   },

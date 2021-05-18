@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, getUsers, getUser } from './user.controller';
+import { createUser, getUsers, getUser, deleteUser } from './user.controller';
 
 const userRouter: Router = Router();
 
@@ -99,25 +99,23 @@ userRouter.get('/', getUsers);
  * @swagger
  * /users/{id}:
  *  get:
- *    summary: Crear un nuevo usuario
+ *    summary: Obtener usuario por ID
  *    tags: [User]
  *    parameters:
  *     - $ref: '#/components/parameters/userId'
  *    responses:
  *      200:
- *          description: Obtener lista de usuarios
+ *          description: Obtener usuario por ID
  *          content:
  *              application/json:
  *                  schema:
  *                      type: object
  *                      properties:
  *                          data:
- *                              type: array
- *                              items: 
- *                               $ref: '#/components/schemas/User'
+ *                              $ref: '#/components/schemas/User'
  *                          message:
  *                              type: string
- *                              default: Lista de usuarios obtenida con éxito.
+ *                              default: Usuario obtenido con éxito.
  *                          success:
  *                              type: boolean
  *                              default: true
@@ -204,5 +202,66 @@ userRouter.get('/:id', getUser);
  *
  */
 userRouter.post('/', createUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *  delete:
+ *    summary: Eliminar usuario
+ *    tags: [User]
+ *    parameters:
+ *     - $ref: '#/components/parameters/userId'
+ *    responses:
+ *      200:
+ *          description: Usuario eliminado con éxito
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              default: null
+ *                          message:
+ *                              type: string
+ *                              default: El usuario ha sido eliminado con éxito.
+ *                          success:
+ *                              type: boolean
+ *                              default: true
+ *      400:
+ *          description: El ID es requerido para eliminar un usuario
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              default: null
+ *                          message:
+ *                              type: string
+ *                              default: El ID es requerido para eliminar un usuario.
+ *                          success:
+ *                              type: boolean
+ *                              default: false
+ *      404:
+ *          description: Usuario no encontrado
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              default: null
+ *                          message:
+ *                              type: string
+ *                              default: Usuario no encontrado.
+ *                          success:
+ *                              type: boolean
+ *                              default: true
+ *      
+ */
+userRouter.delete('/:id', deleteUser);
 
 export default userRouter;

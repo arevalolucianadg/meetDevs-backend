@@ -8,10 +8,11 @@ import userModel from './user.model';
 export const getUsers: Handler = async (req, res) => {
   try {
     const users = await userModel.find({});
+    const resMessage = users.length === 0 ? 'No hay usuarios.' : 'Lista de usuarios obtenida con éxito.';
     res.status(200).json(
       handleResponse({
         data: users,
-        message: 'Lista de usuarios obtenida con éxito.',
+        message: resMessage,
         success: true,
       })
     );
@@ -51,7 +52,6 @@ export const getUser: Handler = async (req, res) => {
       })
     );
   }
-
 };
 
 export const createUser: Handler = async (req, res) => {
@@ -83,7 +83,7 @@ export const createUser: Handler = async (req, res) => {
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   const newUser = new userModel({
-    id: uuidv4(),
+    userId: uuidv4(),
     firstName,
     lastName,
     email,
@@ -96,6 +96,39 @@ export const createUser: Handler = async (req, res) => {
     handleResponse({
       data: savedUser,
       message: 'El usuario ha sido creado con éxito.',
+      success: true,
+    })
+  );
+};
+
+export const deleteUser: Handler = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json(
+      handleResponse({
+        data: null,
+        message: 'El ID es requerido para eliminar un usuario.',
+        success: false,
+      })
+    );
+  }
+
+  const userDeleted = await userModel.findOneAndDelete({ userId: id });
+  if (!userDeleted) {
+    return res.status(404).json(
+      handleResponse({
+        data: null,
+        message: 'Usuario no encontrado.',
+        success: true,
+      })
+    );
+  }
+
+  return res.status(200).json(
+    handleResponse({
+      data: null,
+      message: 'El usuario ha sido eliminado con éxito.',
       success: true,
     })
   );
