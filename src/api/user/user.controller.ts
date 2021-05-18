@@ -5,6 +5,54 @@ import { v4 as uuidv4 } from 'uuid';
 import { handleResponse } from '../../utils/handleResponse';
 import userModel from './user.model';
 
+export const getUsers: Handler = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    res.status(200).json(
+      handleResponse({
+        data: users,
+        message: 'Lista de usuarios obtenida con éxito.',
+        success: true,
+      })
+    );
+  } catch (error) {
+    // TODO loguear error
+    console.log(error);
+    return res.status(500).json(
+      handleResponse({
+        data: null,
+        message: 'Ha ocurrido un error al obtener todos los usuarios.',
+        success: false,
+      })
+    );
+  }
+};
+
+export const getUser: Handler = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userFound = await userModel.findById(id);
+    res.status(200).json(
+      handleResponse({
+        data: userFound,
+        message: 'Usuario obtenido con éxito.',
+        success: true,
+      })
+    );
+  } catch (error) {
+    // TODO loguear error
+    console.log(error);
+    return res.status(500).json(
+      handleResponse({
+        data: null,
+        message: 'Ha ocurrido un error al obtener el usuario requerido.',
+        success: false,
+      })
+    );
+  }
+
+};
 
 export const createUser: Handler = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
