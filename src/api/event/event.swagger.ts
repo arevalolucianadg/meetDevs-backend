@@ -2,98 +2,129 @@
  * @swagger
  * components:
  *  schemas:
- *    NewUser:
+ *    NewEvent:
  *      type: object
  *      properties:
+ *        name:
+ *          type: string
+ *          description: Nombre del evento
+ *        description:
+ *          type: string
+ *          description: Descripción del evento
+ *        date:
+ *          type: string
+ *          description: Fecha del evento
+ *        userId:
+ *          type: string
+ *          description: ID del usuario ADMIN que crea el evento
+ *      required:
+ *        - name
+ *        - description
+ *        - date
+ *        - userId
+ *      example:
+ *        name: Nombre del evento
+ *        description: Descripción del evento
+ *        date: Tue May 24 2021 20:00:00 GMT-0300
+ *        userId: 60a44a2927981948386b0b57
+ * 
+ *    EventResponse:
+ *      type: object
+ *      properties:
+ *        status:
+ *          type: string
+ *          description: Estado del evento
+ *        audience:
+ *          type: array
+ *          description: Asistentes al evento
+ *        confirmedAssistance:
+ *          type: array
+ *          description: Asistentes confirmados del evento
+ *        name:
+ *          type: string
+ *          description: Nombre del evento
+ *        description:
+ *          type: string
+ *          description: Descripción del evento
+ *        date:
+ *          type: string
+ *          description: Fecha del evento
+ *        creatorUser:
+ *          type: string
+ *          description: ID del usuario ADMIN que creó el evento
+ *        creationDate:
+ *          type: string
+ *          description: Fecha de creación del evento
  *        id:
  *          type: string
- *          description: ID del usuario
- *        firstName:
- *          type: string
- *          description: Nombre del usuario
- *        lastName:
- *          type: string
- *          description: Apellido del usuario
- *        email:
- *          type: string
- *          description: Email del usuario
- *        password:
- *          type: string
- *          description: Contraseña del usuario
- *        role:
- *          type: string
- *          description: Rol del usuario
- *        photo:
- *          type: string
- *          description: Foto del usuario
+ *          description: ID del evento
  *      required:
- *        - firstName
- *        - lastName
  *        - email
  *        - password
  *      example:
- *        firstName: Han
- *        lastName: Solo
- *        email: han.solo@gmail.com
- *        password: hsolo
- *    SafeUser:
+ *        status: PROGRAMMED
+ *        audience: []
+ *        confirmedAssistance: []
+ *        name: Nombre del usuario
+ *        description: Descripción del evento
+ *        date: Tue May 24 2021 20:00:00 GMT-0300
+ *        creatorUser: 60a44b3d2d80f543c062812e
+ *        creationDate: 2021-05-20T20:00:00.747Z
+ *        id: 60a44b3d2d80f543c062812e
+ * 
+ *    EventResponseFull:
  *      type: object
  *      properties:
+ *        status:
+ *          type: string
+ *          description: Estado del evento
+ *        audience:
+ *          type: array
+ *          description: Asistentes al evento
+ *        confirmedAssistance:
+ *          type: array
+ *          description: Asistentes confirmados del evento
+ *        name:
+ *          type: string
+ *          description: Nombre del evento
+ *        description:
+ *          type: string
+ *          description: Descripción del evento
+ *        date:
+ *          type: string
+ *          description: Fecha del evento
+ *        creatorUser:
+ *          type: object
+ *          description: Usuario ADMIN creador del evento
+ *        creationDate:
+ *          type: string
+ *          description: Fecha de creación del evento
  *        id:
  *          type: string
- *          description: ID del usuario
- *        firstName:
- *          type: string
- *          description: Nombre del usuario
- *        lastName:
- *          type: string
- *          description: Apellido del usuario
- *        email:
- *          type: string
- *          description: Email del usuario
- *        role:
- *          type: string
- *          description: Rol del usuario
- *        photo:
- *          type: string
- *          description: Foto del usuario
- *        eventsCreated:
- *          type: array
- *          description: Eventos creados por el usuario
- *          items: 
- *           $ref: '#/components/schemas/EventResponse' 
+ *          description: ID del evento
  *      example:
- *        role: USER
- *        firstName: Han
- *        lastName: Solo
- *        email: han.solo@gmail.com
- *        id: 60a3f5e5f7ccda3664813561
- *        eventsCreated: []
- *  parameters:
- *   userId:
- *    in: path
- *    name: id
- *    required: true
- *    schema:
- *     type: string
- *    description: ID del usuario
- *  securitySchemes:
- *   bearerAuth:
- *    type: http
- *    scheme: bearer
- *    bearerFormat: JWT
+ *        status: PROGRAMMED
+ *        audience: []
+ *        confirmedAssistance: []
+ *        name: Nombre del usuario
+ *        description: Descripción del evento
+ *        date: Tue May 24 2021 20:00:00 GMT-0300
+ *        creatorUser: { firstName: Leia, lastName: Organa, email: leia.organa@gmail.com, id: 60a44417c194b02e88ba1f60 }
+ *        creationDate: 2021-05-20T20:00:00.747Z
+ *        id: 60a44b3d2d80f543c062812e
+ * 
  */
 
 
 /**
  * @swagger
- * /users:
+ * /events:
  *  get:
- *    summary: Obtener lista de usuarios
- *    tags: [users]
+ *    summary: Obtener lista de eventos
+ *    tags: [events]
  *    responses:
  *      200:
- *          description: Obtener lista de usuarios
+ *          description: Obtener lista de eventos
  *          content:
  *              application/json:
  *                  schema:
@@ -102,15 +133,15 @@
  *                          data:
  *                              type: array
  *                              items: 
- *                               $ref: '#/components/schemas/SafeUser'
+ *                               $ref: '#/components/schemas/EventResponseFull'
  *                          message:
  *                              type: string
- *                              default: Usuario obtenido con éxito.
+ *                              default: Lista de eventos obtenida con éxito.
  *                          success:
  *                              type: boolean
  *                              default: true
  *      500:
- *          description: Error al obtener usuarios de la base de datos
+ *          description: Ha ocurrido un error al obtener todos los eventos.
  *          content:
  *              application/json:
  *                  schema:
@@ -121,7 +152,7 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: Ha ocurrido un error al obtener las lista de usuarios.
+ *                              default: Ha ocurrido un error al obtener todos los eventos.
  *                          success:
  *                              type: boolean
  *                              default: false
@@ -131,32 +162,28 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /events/{id}:
  *  get:
- *    summary: Obtener usuario por ID
- *    tags: [users]
- *    security:
- *     - bearerAuth: []
- *    parameters:
- *     - $ref: '#/components/parameters/userId'
+ *    summary: Obtener evento por ID
+ *    tags: [events]
  *    responses:
  *      200:
- *          description: Obtener usuario por ID
+ *          description: Obtener un evento
  *          content:
  *              application/json:
  *                  schema:
  *                      type: object
  *                      properties:
- *                          data:
- *                              $ref: '#/components/schemas/SafeUser'
+ *                          data: 
+ *                              $ref: '#/components/schemas/EventResponseFull'
  *                          message:
  *                              type: string
- *                              default: Usuario obtenido con éxito.
+ *                              default: Evento obtenido con éxito. | No hay eventos para el ID proporcionado.
  *                          success:
  *                              type: boolean
  *                              default: true
  *      500:
- *          description: Error al obtener usuarios de la base de datos
+ *          description: Ha ocurrido un error al obtener el evento requerido.
  *          content:
  *              application/json:
  *                  schema:
@@ -167,7 +194,7 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: Ha ocurrido un error al obtener todos los usuarios.
+ *                              default: Ha ocurrido un error al obtener el evento requerido.
  *                          success:
  *                              type: boolean
  *                              default: false
@@ -177,34 +204,36 @@
 
 /**
  * @swagger
- * /users:
+ * /events:
  *  post:
- *    summary: Crear un nuevo usuario
- *    tags: [users]
+ *    summary: Crear un nuevo evento
+ *    tags: [events]
+ *    security:
+ *     - bearerAuth: []
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/NewUser'
+ *            $ref: '#/components/schemas/NewEvent'
  *    responses:
  *      201:
- *          description: El usuario ha sido creado con éxito.
+ *          description: Evento creado con éxito.
  *          content:
  *              application/json:
  *                  schema:
  *                      type: object
  *                      properties:
  *                          data:
- *                              $ref: '#/components/schemas/SafeUser'
+ *                              $ref: '#/components/schemas/EventResponse'
  *                          message:
  *                              type: string
- *                              default: El usuario ha sido creado con éxito.
+ *                              default: Evento creado con éxito.
  *                          success:
  *                              type: boolean
  *                              default: true
  *      400:
- *          description: Nombre, apellido, email y contraseña son requeridos.
+ *          description: Nombre, descripción, fecha e ID de usuario son requeridos.
  *          content:
  *              application/json:
  *                  schema:
@@ -215,12 +244,12 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: Nombre, apellido, email y contraseña son requeridos.
+ *                              default: Nombre, descripción, fecha e ID de usuario son requeridos.
  *                          success:
  *                              type: boolean
  *                              default: false
- *      409:
- *          description: El email ingresado ya existe. Inicie sesión.
+ *      401:
+ *          description: No autorizado.
  *          content:
  *              application/json:
  *                  schema:
@@ -231,7 +260,7 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: El email ingresado ya existe. Inicie sesión.
+ *                              default: No autorizado.
  *                          success:
  *                              type: boolean
  *                              default: false
@@ -241,37 +270,36 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /events/{id}:
  *  put:
- *    summary: Actualizar usuario
- *    tags: [users]
+ *    summary: Actualizar un evento por ID
+ *    tags: [events]
  *    security:
  *     - bearerAuth: []
- *    parameters:
- *     - $ref: '#/components/parameters/userId'
  *    requestBody:
- *     content:
- *      application/json:
- *       schema:
- *        $ref: '#/components/schemas/NewUser'
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/NewEvent'
  *    responses:
  *      200:
- *          description: Usuario actualizado con éxito
+ *          description: Evento actualizado con éxito.
  *          content:
  *              application/json:
  *                  schema:
  *                      type: object
  *                      properties:
  *                          data:
- *                              $ref: '#/components/schemas/SafeUser'
+ *                              $ref: '#/components/schemas/EventResponse'
  *                          message:
  *                              type: string
- *                              default: El usuario fue actualizado con éxito.
+ *                              default: El evento fue actualizado con éxito.
  *                          success:
  *                              type: boolean
  *                              default: true
  *      400:
- *          description: El ID es requerido para actualizar un usuario
+ *          description: El ID es requerido para actualizar un evento.
  *          content:
  *              application/json:
  *                  schema:
@@ -282,12 +310,12 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: El ID es requerido para actualizar un usuario.
+ *                              default: El ID es requerido para actualizar un evento.
  *                          success:
  *                              type: boolean
  *                              default: false
  *      404:
- *          description: Usuario no encontrado
+ *          description: El ID ingresado no pertenece a un evento existente.
  *          content:
  *              application/json:
  *                  schema:
@@ -298,27 +326,26 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: El ID ingresado no pertenece a un usuario existente.
+ *                              default: El ID ingresado no pertenece a un evento existente.
  *                          success:
  *                              type: boolean
  *                              default: false
- *      
+ *
  */
-
 
 /**
  * @swagger
- * /users/{id}:
+ * /events/{id}:
  *  delete:
- *    summary: Eliminar usuario
- *    tags: [users]
+ *    summary: Eliminar evento
+ *    tags: [events]
  *    security:
  *     - bearerAuth: []
  *    parameters:
  *     - $ref: '#/components/parameters/userId'
  *    responses:
  *      200:
- *          description: Usuario eliminado con éxito
+ *          description: Evento eliminado con éxito
  *          content:
  *              application/json:
  *                  schema:
@@ -329,12 +356,12 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: El usuario ha sido eliminado con éxito.
+ *                              default: El evento ha sido eliminado con éxito.
  *                          success:
  *                              type: boolean
  *                              default: true
  *      400:
- *          description: El ID es requerido para eliminar un usuario
+ *          description: El ID es requerido para eliminar un evento
  *          content:
  *              application/json:
  *                  schema:
@@ -345,12 +372,12 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: El ID es requerido para eliminar un usuario.
+ *                              default: El ID es requerido para eliminar un evento.
  *                          success:
  *                              type: boolean
  *                              default: false
  *      404:
- *          description: Usuario no encontrado
+ *          description: Evento no encontrado
  *          content:
  *              application/json:
  *                  schema:
@@ -361,7 +388,7 @@
  *                              default: null
  *                          message:
  *                              type: string
- *                              default: Usuario no encontrado.
+ *                              default: Evento no encontrado.
  *                          success:
  *                              type: boolean
  *                              default: true

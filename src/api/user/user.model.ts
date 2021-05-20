@@ -35,6 +35,11 @@ const UserSchema: Schema = new Schema({
     type: String,
     trim: true,
   },
+  eventsCreated: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Event',
+    required: true,
+  }]
 });
 
 UserSchema.set('toJSON', {

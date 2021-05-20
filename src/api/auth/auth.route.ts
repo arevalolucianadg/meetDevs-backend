@@ -4,8 +4,7 @@ import { loginController, authController } from './auth.controller';
 const authRouter: Router = Router();
 
 
-authRouter.post('/', authController );
-
 authRouter.post('/login', loginController);
+authRouter.post('/', authController );
 
 export default authRouter;

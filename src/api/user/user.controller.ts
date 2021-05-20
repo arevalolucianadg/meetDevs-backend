@@ -6,7 +6,12 @@ import { passwordEncrypt } from '../../utils/passwordEncrypt';
 
 export const getUsers: Handler = async (req, res) => {
   try {
-    const users = await userModel.find({});
+    const users = await userModel.find({}).populate('eventsCreated', {
+      status: 1,
+      name: 1,
+      description: 1,
+      date: 1,
+    });
     const resMessage =
       users.length === 0
         ? 'No hay usuarios.'
@@ -35,7 +40,12 @@ export const getUser: Handler = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const userFound = await userModel.findById(id);
+    const userFound = await userModel.findById(id).populate('eventsCreated', {
+      status: 1,
+      name: 1,
+      description: 1,
+      date: 1,
+    });
     res.status(200).json(
       handleResponse({
         data: userFound,

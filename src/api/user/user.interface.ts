@@ -1,6 +1,9 @@
 import { Document, Model } from 'mongoose';
 
+import { IEvent } from '../event/event.interface';
+
 export interface IUser {
+    _id: string;
     id: string;
     firstName: string;
     lastName: string;
@@ -8,6 +11,7 @@ export interface IUser {
     password: string;
     role: 'ADMIN' | 'USER';
     photo: string;
+    eventsCreated: IEvent[];
 }
 
 type UserDoc = IUser & Document;
