@@ -10,6 +10,7 @@
 ``npm install`` o ``npm i``
 
 **Crear archivo .env en la raíz del directorio**
+```
 PORT=8080
 
 JWT_SECRET_KEY=VkRCNktDjH672kLms2qmdS
@@ -17,6 +18,7 @@ JWT_SECRET_KEY=VkRCNktDjH672kLms2qmdS
 MONGODB_URI=mongodb+srv://meetdevs_admin_user:0BkWajCTOW5CRY3K@cluster0.kj5vh.mongodb.net/meetDevs
 
 CLOUDINARY_URL=cloudinary://229184362934853:juu1MRIcegXXD-fSczK3IEr91js@dt1bb31mb
+```
 
 **Ejecutar en modo desarrollo**
 ``npm run dev``
