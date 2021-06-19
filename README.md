@@ -20,6 +20,9 @@ MONGODB_URI=mongodb+srv://meetdevs_admin_user:0BkWajCTOW5CRY3K@cluster0.kj5vh.mo
 CLOUDINARY_URL=cloudinary://229184362934853:juu1MRIcegXXD-fSczK3IEr91js@dt1bb31mb
 ```
 
+**Ejecutar en modo productivo**
+``npm run prod``
+
 **Ejecutar en modo desarrollo**
 ``npm run dev``
 
