@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/server.js",
+  "engines": {
+    "node": "14.x",
+    "npm": "7.x"
+  },
   "scripts": {
     "build": "rimraf dist && tsc",
     "dev": "nodemon server.ts",
